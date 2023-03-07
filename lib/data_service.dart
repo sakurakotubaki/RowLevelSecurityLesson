@@ -12,6 +12,7 @@ class DataService {
 
   final SupabaseClient supabase = Supabase.instance.client;
 
+  // データを追加するメソッド
   Future<void> addNotes(String _body) async {
     // ローレベルセキュリティを使用するためのuserId
     String userId = supabase.auth.currentUser!.id;
@@ -22,7 +23,7 @@ class DataService {
   Future<void> updateNotes(dynamic noteID, String _body) async {
     await ref.read(notesProvider).from('notes').update({'body': _body}).match({'id': noteID});
   }
-  // データを削除するためのメソッド
+  // データを削除するメソッド
   Future<void> deleteNotes(dynamic noteID) async {
     await ref.read(notesProvider).from('notes').delete().match({'id': noteID});
   }
