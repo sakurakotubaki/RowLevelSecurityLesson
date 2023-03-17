@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_app/data_service.dart';
 import 'package:supabase_app/notes_provider.dart';
+import 'package:supabase_app/start_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotesStream extends ConsumerWidget {
   const NotesStream({super.key});
@@ -13,6 +15,18 @@ class NotesStream extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () async {
+                // ログアウトするボタン.
+                await Supabase.instance.client.auth.signOut();
+                if (context.mounted) {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const StartPage()));
+                }
+              },
+              icon: const Icon(Icons.logout)),
+        ],
         title: const Text('Notes App'),
       ),
       floatingActionButton: FloatingActionButton(
@@ -32,7 +46,8 @@ class NotesStream extends ConsumerWidget {
                         onPressed: () async {
                           // Formから取得したデータを保存する.
                           await ref
-                              .read(dataServiceProvider.notifier).state
+                              .read(dataServiceProvider.notifier)
+                              .state
                               .addNotes(_body.text);
                           Navigator.of(context).pop();
                         },
@@ -82,7 +97,8 @@ class NotesStream extends ConsumerWidget {
                                                 // Formから取得したデータを更新する.
                                                 ref
                                                     .read(dataServiceProvider
-                                                        .notifier).state
+                                                        .notifier)
+                                                    .state
                                                     .updateNotes(
                                                         noteID, _body.text);
                                                 Navigator.of(context).pop();
@@ -102,7 +118,8 @@ class NotesStream extends ConsumerWidget {
                               final noteID = notes[index]['id'];
                               // ボタンを押すとクエリが実行されて、データが削除される!
                               ref
-                                  .read(dataServiceProvider.notifier).state
+                                  .read(dataServiceProvider.notifier)
+                                  .state
                                   .deleteNotes(noteID);
                             },
                             icon: const Icon(
